@@ -50,9 +50,7 @@ export default (query: string = '#map') => {
    * @param e touchEvent | mouseEvent
    */
   function handleTouchStart(event: any) {
-    if (event.which === 3) return;
-    // if (event.which !== 1) return;
-
+    event.preventDefault();
     isDown = true;
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
@@ -82,6 +80,7 @@ export default (query: string = '#map') => {
     // fixme: touchevent and mouseEvent
     // type: "mousemove"
     // type: "touchmove"
+    event.preventDefault();
 
     if (isDown) {
       let x, y;
