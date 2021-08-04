@@ -4,6 +4,7 @@
       <div class="position-relative h-100">
         <button
           @click="gogo"
+          @touchstart="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 30%; top: 30%"
@@ -12,6 +13,7 @@
         </button>
         <button
           @click="gogo"
+          @touchstart="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 20%; top: 20%"

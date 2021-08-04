@@ -46,7 +46,7 @@ export default (query: string = '#map') => {
    * @param e touchEvent | mouseEvent
    */
   function handleTouchStart(event: any) {
-    event.stopPropagation();
+    event.preventDefault();
     isDown = true;
     const x = event.touches[0].clientX;
     const y = event.touches[0].clientY;
@@ -73,7 +73,7 @@ export default (query: string = '#map') => {
    * @param event touchEvent | mouseEvent
    */
   function handleTouchMove(event: any) {
-    event.stopPropagation();
+    event.preventDefault();
     if (isDown) {
       let x, y;
       if (event.touches) {
