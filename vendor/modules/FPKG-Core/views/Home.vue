@@ -1,6 +1,6 @@
 <template>
   <div id="map-wrap" class="w-100">
-    <div id="map">
+    <div id="map" class="position-absolute" style="left: -50%; top: -50%">
       <div class="position-relative h-100">
         <button
           type="button"

@@ -5,7 +5,6 @@ const HEIGHT = window.innerHeight || document.documentElement.clientHeight;
  * query: DOM
  */
 export default (query: string = '#map') => {
-  var mousePosition;
   var offset = [0, 0];
   var isDown = false;
 
@@ -15,9 +14,6 @@ export default (query: string = '#map') => {
   const MAP_WIDTH = 4584;
   const MAP_HEIGHT = 3056;
 
-  MAP.style.position = 'absolute';
-  MAP.style.left = '-50%';
-  MAP.style.top = '-50%';
   MAP.style.width = `${MAP_WIDTH}px`;
   MAP.style.height = `${MAP_HEIGHT}px`;
 
