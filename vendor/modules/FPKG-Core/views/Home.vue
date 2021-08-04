@@ -1,20 +1,21 @@
 <template>
   <div id="map-wrap" class="w-100">
+    {{ counter }}
     <div id="map" class="position-absolute" style="left: -50%; top: -50%">
       <div class="position-relative h-100">
         <button
+          @click="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 30%; top: 30%"
-          onclick="alert('可撥BZ')"
         >
           <i class="fas fa-flag"></i>
         </button>
         <button
+          @click="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 20%; top: 20%"
-          onclick="alert('QAQ')"
         >
           <i class="fas fa-flag"></i>
         </button>
@@ -26,12 +27,22 @@
 <script lang="ts">
 import { defineComponent, nextTick } from 'vue';
 import grabImg from '../lib/grabImg';
+import STATE from '../API/state';
 
 export default defineComponent({
   setup() {
+    const { state } = STATE;
+
+    const gogo = () => {
+      state.count += 1;
+    };
     nextTick(() => {
       grabImg();
     });
+
+    return {
+      gogo,
+    };
   },
 });
 </script>

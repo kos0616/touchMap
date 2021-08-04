@@ -5,6 +5,7 @@
   >
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
+      clicked: {{ counter }}
       <div id="log"></div>
       <button
         class="navbar-toggler"
@@ -43,3 +44,21 @@
   </nav>
   <router-view style="height: 100vh" />
 </template>
+
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import STATE from './API/state';
+
+export default defineComponent({
+  setup() {
+    const { state } = STATE;
+    const counter = computed(() => {
+      return state.count;
+    });
+
+    return {
+      counter,
+    };
+  },
+});
+</script>
