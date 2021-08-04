@@ -46,10 +46,10 @@ export default (query: string = '#map') => {
    * @param e touchEvent | mouseEvent
    */
   function handleTouchStart(event: any) {
-    event.preventDefault();
     isDown = true;
-    const x = event.touches ? event.touches[0].clientX : event.clientX;
-    const y = event.touches ? event.touches[0].clientY : event.clientY;
+    if (event.touches.length > 1) event.preventDefault();
+    const x = event.touches[0].clientX;
+    const y = event.touches[0].clientY;
     offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
   }
 
@@ -73,11 +73,7 @@ export default (query: string = '#map') => {
    * @param event touchEvent | mouseEvent
    */
   function handleTouchMove(event: any) {
-    // fixme: touchevent and mouseEvent
-    // type: "mousemove"
-    // type: "touchmove"
-    event.preventDefault();
-
+    if (event.touches.length > 1) event.preventDefault();
     if (isDown) {
       let x, y;
       if (event.touches) {
