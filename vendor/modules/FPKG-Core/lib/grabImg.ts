@@ -46,8 +46,8 @@ export default (query: string = '#map') => {
    * @param e touchEvent | mouseEvent
    */
   function handleTouchStart(event: any) {
+    event.stopPropagation();
     isDown = true;
-    if (event.touches.length > 1) event.preventDefault();
     const x = event.touches[0].clientX;
     const y = event.touches[0].clientY;
     offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
@@ -73,7 +73,7 @@ export default (query: string = '#map') => {
    * @param event touchEvent | mouseEvent
    */
   function handleTouchMove(event: any) {
-    if (event.touches.length > 1) event.preventDefault();
+    event.stopPropagation();
     if (isDown) {
       let x, y;
       if (event.touches) {
