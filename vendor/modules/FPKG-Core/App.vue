@@ -5,7 +5,10 @@
   >
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
-      clicked: {{ counter }}
+      <div @click="gogo" class="btn">
+        <i class="fas fa-plus"></i>
+        clicked: {{ counter }}
+      </div>
       <div id="log"></div>
       <button
         class="navbar-toggler"
@@ -52,12 +55,18 @@ import STATE from './API/state';
 export default defineComponent({
   setup() {
     const { state } = STATE;
+
+    const gogo = () => {
+      state.count += 1;
+    };
+
     const counter = computed(() => {
       return state.count;
     });
 
     return {
       counter,
+      gogo,
     };
   },
 });
