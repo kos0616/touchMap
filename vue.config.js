@@ -6,7 +6,7 @@ function resolve(dir) {
 }
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/touchMap/' : '/',
-  outputDir: 'docs',
+  outputDir: 'build',
   devServer: {
     overlay: {
       warnings: false,

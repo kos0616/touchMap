@@ -1,14 +1,18 @@
 {
   "name": "test-map",
+  "homepage": "https://kos0616.github.io/touchMap",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "gh-pages": "^3.2.3",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0"
