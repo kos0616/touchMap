@@ -1,13 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
-const isProduction = process.env.NODE_ENV === 'production';
-
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
 module.exports = {
-  outputDir: isProduction ? 'frontend' : 'dist',
+  outputDir: 'docs',
   devServer: {
     overlay: {
       warnings: false,
