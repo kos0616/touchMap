@@ -1,5 +1,7 @@
-const WIDTH = window.innerWidth || document.documentElement.clientWidth;
-const HEIGHT = window.innerHeight || document.documentElement.clientHeight;
+import { ref, computed } from 'vue';
+
+const IMG_WIDTH = 4584;
+const IMG_HEIGHT = 3056;
 
 /**
  * query: DOM
@@ -11,11 +13,20 @@ export default (query: string = '#map') => {
   const MAP = document.querySelector(query) as HTMLDivElement;
   if (!MAP) throw new Error('Map is not exists!.');
 
-  const MAP_WIDTH = 4584;
-  const MAP_HEIGHT = 3056;
+  const scale = ref(1);
+  let WIDTH = window.innerWidth || document.documentElement.clientWidth;
+  let HEIGHT = window.innerHeight || document.documentElement.clientHeight;
 
-  MAP.style.width = `${MAP_WIDTH}px`;
-  MAP.style.height = `${MAP_HEIGHT}px`;
+  const MAP_WIDTH = computed(() => IMG_WIDTH * scale.value);
+  const MAP_HEIGHT = computed(() => IMG_HEIGHT * scale.value);
+
+  window.onresize = handleResize;
+
+  MAP.style.width = `${MAP_WIDTH.value}px`;
+  MAP.style.height = `${MAP_HEIGHT.value}px`;
+  MAP.style.transform = `scale(${scale.value})`;
+
+  MAP.addEventListener('transitionend', resetTransition, true);
 
   MAP.addEventListener('touchstart', handleTouchStart, true);
   MAP.addEventListener('touchmove', handleTouchMove, true);
@@ -24,6 +35,46 @@ export default (query: string = '#map') => {
   MAP.addEventListener('mousedown', handleMouseStart, true);
   document.addEventListener('mousemove', handleMouseMove, true);
   document.addEventListener('mouseup', handleEnd, true);
+  MAP.addEventListener('wheel', handleScroll, true);
+
+  function handleScroll(e: WheelEvent) {
+    const isZoom = e.deltaY < 0;
+    if (isZoom && scale.value === 1) return;
+    if (isZoom && scale.value < 1) {
+      scale.value = (scale.value * 10 + 1) / 10;
+      resizingMap();
+      return;
+    }
+
+    const newScale = (scale.value * 10 - 1) / 10;
+    if (IMG_WIDTH * newScale < WIDTH) return;
+    if (IMG_HEIGHT * newScale < HEIGHT) return;
+    scale.value = newScale;
+    resizingMap();
+  }
+
+  /** 地圖縮放 */
+  function resizingMap() {
+    MAP.style.width = `${MAP_WIDTH.value}px`;
+    MAP.style.height = `${MAP_HEIGHT.value}px`;
+
+    /** 修正地圖邊界
+     * 使用 transition 緩和邊框修正時的異樣感
+     * 動畫結束後 resetTransition 重製 css */
+    if (WIDTH - parseInt(MAP.style.left) > MAP_WIDTH.value) {
+      MAP.style.transition = 'all .3s';
+      MAP.style.left = WIDTH - MAP_WIDTH.value + 'px';
+    }
+    if (HEIGHT - parseInt(MAP.style.top) > MAP_HEIGHT.value) {
+      MAP.style.transition = 'all .3s';
+      MAP.style.top = HEIGHT - MAP_HEIGHT.value + 'px';
+    }
+  }
+
+  /** 動畫結束之後，重製 transition 以避免移動出現延遲 */
+  function resetTransition() {
+    MAP.style.transition = 'width 0.3s, height 0.3s';
+  }
 
   function handleEnd() {
     isDown = false;
@@ -33,7 +84,7 @@ export default (query: string = '#map') => {
    * 點擊開始的觸發
    * @param e touchEvent | mouseEvent
    */
-  function handleMouseStart(event: any) {
+  function handleMouseStart(event: MouseEvent) {
     if (event.which !== 1) return;
     isDown = true;
     const x = event.clientX;
@@ -43,9 +94,8 @@ export default (query: string = '#map') => {
 
   /**
    * 點擊開始的觸發
-   * @param e touchEvent | mouseEvent
    */
-  function handleTouchStart(event: any) {
+  function handleTouchStart(event: TouchEvent) {
     event.stopPropagation();
     isDown = true;
     const x = event.touches[0].clientX;
@@ -55,9 +105,8 @@ export default (query: string = '#map') => {
 
   /**
    * 滑鼠移動的觸發
-   * @param event touchEvent | mouseEvent
    */
-  function handleMouseMove(event: any) {
+  function handleMouseMove(event: MouseEvent) {
     if (event.which !== 1) return;
     if (isDown) {
       let [x, y] = [event.clientX, event.clientY];
@@ -70,12 +119,12 @@ export default (query: string = '#map') => {
 
   /**
    * 觸控板移動的觸發
-   * @param event touchEvent | mouseEvent
    */
-  function handleTouchMove(event: any) {
+  function handleTouchMove(event: TouchEvent) {
     event.stopPropagation();
     if (isDown) {
-      let x, y;
+      let x = 0,
+        y = 0;
       if (event.touches) {
         const log = document.getElementById('log') as HTMLDivElement;
         const TOUCH = event.touches;
@@ -83,8 +132,8 @@ export default (query: string = '#map') => {
           (TOUCH[0] || {}).clientX,
         )}, ${Math.floor((TOUCH[1] || {}).clientX)}`;
 
-        x = event.touches[0].clientX;
-        y = event.touches[0].clientY;
+        x = event.touches[0].clientX || 0;
+        y = event.touches[0].clientY || 0;
       }
       const position = computedPosition({ x, y });
 
@@ -100,20 +149,25 @@ export default (query: string = '#map') => {
     let position_x = 0;
     const left = mousePosition.x + offset[0];
     if (left < 0) position_x = left;
-    if (left < WIDTH - MAP_WIDTH) {
-      position_x = WIDTH - MAP_WIDTH;
+    if (left < WIDTH - MAP_WIDTH.value) {
+      position_x = WIDTH - MAP_WIDTH.value;
     }
 
     let position_y = 0;
     const top = mousePosition.y + offset[1];
 
     if (top < 0) position_y = top;
-    if (top < HEIGHT - MAP_HEIGHT) {
-      position_y = HEIGHT - MAP_HEIGHT;
+    if (top < HEIGHT - MAP_HEIGHT.value) {
+      position_y = HEIGHT - MAP_HEIGHT.value;
     }
     return {
       left: position_x,
       top: position_y,
     };
+  }
+
+  function handleResize() {
+    WIDTH = window.innerWidth || document.documentElement.clientWidth;
+    HEIGHT = window.innerHeight || document.documentElement.clientHeight;
   }
 };
