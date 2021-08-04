@@ -4,7 +4,7 @@
     <div id="map" class="position-absolute" style="left: -50%; top: -50%">
       <div class="position-relative h-100">
         <button
-          @click="gogo"
+          @click.stop="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 30%; top: 30%"
@@ -12,7 +12,7 @@
           <i class="fas fa-flag"></i>
         </button>
         <button
-          @click="gogo"
+          @click.stop="gogo"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 20%; top: 20%"
