@@ -43,6 +43,8 @@ export default (query: string = '#map') => {
     if (isZoom && scale.value < 1) {
       scale.value = (scale.value * 10 + 1) / 10;
       resizingMap();
+      setOrgin(true);
+      fixBorder();
       return;
     }
 
@@ -51,23 +53,47 @@ export default (query: string = '#map') => {
     if (IMG_HEIGHT * newScale < HEIGHT) return;
     scale.value = newScale;
     resizingMap();
-  }
+    setOrgin(false);
+    fixBorder();
 
-  /** 地圖縮放 */
-  function resizingMap() {
-    MAP.style.width = `${MAP_WIDTH.value}px`;
-    MAP.style.height = `${MAP_HEIGHT.value}px`;
+    /** 地圖縮放 */
+    function resizingMap() {
+      MAP.style.width = `${MAP_WIDTH.value}px`;
+      MAP.style.height = `${MAP_HEIGHT.value}px`;
+    }
+
+    /** 調整地圖縮放時的中心點 */
+    function setOrgin(IsIncrease: boolean) {
+      const stepX = IMG_WIDTH * 0.05;
+      const stepY = IMG_HEIGHT * 0.05;
+      if (IsIncrease) {
+        MAP.style.left = parseInt(MAP.style.left) - stepX + 'px';
+        MAP.style.top = parseInt(MAP.style.top) - stepY + 'px';
+        return;
+      }
+      MAP.style.left = parseInt(MAP.style.left) + stepX + 'px';
+      MAP.style.top = parseInt(MAP.style.top) + stepY + 'px';
+    }
 
     /** 修正地圖邊界
      * 使用 transition 緩和邊框修正時的異樣感
      * 動畫結束後 resetTransition 重製 css */
-    if (WIDTH - parseInt(MAP.style.left) > MAP_WIDTH.value) {
+    function fixBorder() {
       MAP.style.transition = 'all .3s';
-      MAP.style.left = WIDTH - MAP_WIDTH.value + 'px';
-    }
-    if (HEIGHT - parseInt(MAP.style.top) > MAP_HEIGHT.value) {
-      MAP.style.transition = 'all .3s';
-      MAP.style.top = HEIGHT - MAP_HEIGHT.value + 'px';
+      const x = parseInt(MAP.style.left);
+      const y = parseInt(MAP.style.top);
+
+      // 右下角修正
+      if (WIDTH - x > MAP_WIDTH.value) {
+        MAP.style.left = WIDTH - MAP_WIDTH.value + 'px';
+      }
+      if (HEIGHT - y > MAP_HEIGHT.value) {
+        MAP.style.top = HEIGHT - MAP_HEIGHT.value + 'px';
+      }
+
+      // 右上角修正
+      if (x > 0) MAP.style.left = '0px';
+      if (y > 0) MAP.style.top = '0px';
     }
   }
 
