@@ -62,15 +62,34 @@ export default (query: string = '#map') => {
 
     /** 調整地圖縮放時的中心點 */
     function setOrgin(IsIncrease: boolean) {
-      const stepX = IMG_WIDTH * 0.05;
-      const stepY = IMG_HEIGHT * 0.05;
+      const stepX = IMG_WIDTH * 0.1;
+      const stepY = IMG_HEIGHT * 0.1;
+      const positionX = parseInt(MAP.style.left);
+      const positionY = parseInt(MAP.style.top);
+      const centerX = WIDTH / 2;
+      const centerY = HEIGHT / 2;
+
       if (IsIncrease) {
-        MAP.style.left = parseInt(MAP.style.left) - stepX + 'px';
-        MAP.style.top = parseInt(MAP.style.top) - stepY + 'px';
+        const percentX = Number(
+          ((positionX - centerX - stepX / 2) / MAP_WIDTH.value).toFixed(3),
+        );
+        const percentY = Number(
+          ((positionY - centerY - stepY / 2) / MAP_HEIGHT.value).toFixed(3),
+        );
+
+        MAP.style.left = positionX + percentX * stepX + 'px';
+        MAP.style.top = positionY + percentY * stepY + 'px';
         return;
       }
-      MAP.style.left = parseInt(MAP.style.left) + stepX + 'px';
-      MAP.style.top = parseInt(MAP.style.top) + stepY + 'px';
+
+      const percentX2 = Number(
+        ((positionX - centerX + stepX / 2) / MAP_WIDTH.value).toFixed(3),
+      );
+      const percentY2 = Number(
+        ((positionY - centerY + stepY / 2) / MAP_HEIGHT.value).toFixed(3),
+      );
+      MAP.style.left = positionX - percentX2 * stepX + 'px';
+      MAP.style.top = positionY - percentY2 * stepY + 'px';
     }
 
     /** 修正地圖邊界
