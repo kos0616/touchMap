@@ -3,9 +3,7 @@ import { ref, computed } from 'vue';
 const IMG_WIDTH = 4584;
 const IMG_HEIGHT = 3056;
 
-/**
- * query: DOM
- */
+/** query: DOM */
 export default (query: string = '#map') => {
   var offset = [0, 0];
   var isDown = false;
@@ -106,10 +104,7 @@ export default (query: string = '#map') => {
     isDown = false;
   }
 
-  /**
-   * 點擊開始的觸發
-   * @param e touchEvent | mouseEvent
-   */
+  /** 點擊開始的觸發 */
   function handleMouseStart(event: MouseEvent) {
     if (event.which !== 1) return;
     isDown = true;
@@ -118,9 +113,7 @@ export default (query: string = '#map') => {
     offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
   }
 
-  /**
-   * 點擊開始的觸發
-   */
+  /** 點擊開始的觸發 */
   function handleTouchStart(event: TouchEvent) {
     event.stopPropagation();
     isDown = true;
@@ -129,9 +122,7 @@ export default (query: string = '#map') => {
     offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
   }
 
-  /**
-   * 滑鼠移動的觸發
-   */
+  /** 滑鼠移動的觸發 */
   function handleMouseMove(event: MouseEvent) {
     if (event.which !== 1) return;
     if (isDown) {
@@ -143,9 +134,7 @@ export default (query: string = '#map') => {
     }
   }
 
-  /**
-   * 觸控板移動的觸發
-   */
+  /** 觸控板移動的觸發 */
   function handleTouchMove(event: TouchEvent) {
     event.stopPropagation();
     if (isDown) {
@@ -168,9 +157,7 @@ export default (query: string = '#map') => {
     }
   }
 
-  /**
-   * 計算圖片位置的同時，也把圖片邊界考慮在內
-   */
+  /** 計算圖片位置的同時，也把圖片邊界考慮在內 */
   function computedPosition(mousePosition: { x: number; y: number }) {
     let position_x = 0;
     const left = mousePosition.x + offset[0];
