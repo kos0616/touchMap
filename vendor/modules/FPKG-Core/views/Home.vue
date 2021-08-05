@@ -54,6 +54,8 @@ export default defineComponent({
   position: relative;
   #map {
     background-image: url(../assets/map.jpg);
+    background-size: contain;
+    transition: width 0.3s, height 0.3s;
   }
 }
 </style>
