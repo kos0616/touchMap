@@ -7,6 +7,7 @@ const IMG_HEIGHT = 3056;
 export default (query: string = '#map') => {
   var offset = [0, 0];
   var isDown = false;
+  let prevDiff = -1;
 
   const MAP = document.querySelector(query) as HTMLDivElement;
   if (!MAP) throw new Error('Map is not exists!.');
@@ -28,6 +29,7 @@ export default (query: string = '#map') => {
 
   MAP.addEventListener('touchstart', handleTouchStart, true);
   MAP.addEventListener('touchmove', handleTouchMove, true);
+  MAP.addEventListener('touchmove', pointermove_handler, true);
   document.addEventListener('touchend', handleEnd, true);
 
   MAP.addEventListener('mousedown', handleMouseStart, true);
@@ -39,6 +41,125 @@ export default (query: string = '#map') => {
     const isZoom = e.deltaY < 0;
     if (isZoom && scale.value === 1) return;
     if (isZoom && scale.value < 1) {
+      handleZoom(true);
+      return;
+    }
+    handleZoom(false);
+  }
+
+  /** 動畫結束之後，重製 transition 以避免移動出現延遲 */
+  function resetTransition() {
+    MAP.style.transition = 'width 0.3s, height 0.3s';
+  }
+
+  function handleEnd() {
+    isDown = false;
+  }
+
+  /** 點擊開始的觸發 */
+  function handleMouseStart(event: MouseEvent) {
+    if (event.which !== 1) return;
+    isDown = true;
+    const x = event.clientX;
+    const y = event.clientY;
+    offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
+  }
+
+  /** 點擊開始的觸發 */
+  function handleTouchStart(event: TouchEvent) {
+    event.stopPropagation();
+    isDown = true;
+    const x = event.touches[0].clientX;
+    const y = event.touches[0].clientY;
+    offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
+  }
+
+  /** 滑鼠移動的觸發 */
+  function handleMouseMove(event: MouseEvent) {
+    if (event.which !== 1) return;
+    if (isDown) {
+      let [x, y] = [event.clientX, event.clientY];
+      const position = computedPosition({ x, y });
+
+      MAP.style.left = `${position.left}px`;
+      MAP.style.top = `${position.top}px`;
+    }
+  }
+
+  /** 觸控板移動的觸發 */
+  function handleTouchMove(event: TouchEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (isDown) {
+      let x = 0,
+        y = 0;
+      if (event.touches) {
+        const log = document.getElementById('log') as HTMLDivElement;
+        const TOUCH = event.touches;
+        log.textContent = `${TOUCH.length}, ${Math.floor(
+          (TOUCH[0] || {}).clientX,
+        )}, ${Math.floor((TOUCH[1] || {}).clientX)}`;
+
+        x = event.touches[0].clientX || 0;
+        y = event.touches[0].clientY || 0;
+      }
+      const position = computedPosition({ x, y });
+
+      MAP.style.left = `${position.left}px`;
+      MAP.style.top = `${position.top}px`;
+    }
+  }
+
+  /** 計算圖片位置的同時，也把圖片邊界考慮在內 */
+  function computedPosition(mousePosition: { x: number; y: number }) {
+    let position_x = 0;
+    const left = mousePosition.x + offset[0];
+    if (left < 0) position_x = left;
+    if (left < WIDTH - MAP_WIDTH.value) {
+      position_x = WIDTH - MAP_WIDTH.value;
+    }
+
+    let position_y = 0;
+    const top = mousePosition.y + offset[1];
+
+    if (top < 0) position_y = top;
+    if (top < HEIGHT - MAP_HEIGHT.value) {
+      position_y = HEIGHT - MAP_HEIGHT.value;
+    }
+    return {
+      left: position_x,
+      top: position_y,
+    };
+  }
+
+  function handleResize() {
+    WIDTH = window.innerWidth || document.documentElement.clientWidth;
+    HEIGHT = window.innerHeight || document.documentElement.clientHeight;
+  }
+
+  function pointermove_handler(ev: TouchEvent) {
+    const TOUCH = ev.touches;
+    if (TOUCH.length == 2) {
+      const curDiff = Math.abs(TOUCH[0].clientX - TOUCH[1].clientX);
+      // var curDiff = Math.hypot(
+      //   TOUCH[0].pageX - TOUCH[1].pageX,
+      //   TOUCH[0].pageY - TOUCH[1].pageY,
+      // );
+      const isZoom = curDiff > prevDiff;
+
+      if (isZoom && scale.value === 1) return;
+      if (isZoom && scale.value < 1) {
+        handleZoom(true);
+        prevDiff = curDiff;
+        return;
+      }
+      handleZoom(false);
+      prevDiff = curDiff;
+    }
+  }
+
+  function handleZoom(boo: boolean) {
+    if (boo) {
       scale.value = (scale.value * 10 + 1) / 10;
       resizingMap();
       setOrgin(true);
@@ -112,94 +233,5 @@ export default (query: string = '#map') => {
       if (x > 0) MAP.style.left = '0px';
       if (y > 0) MAP.style.top = '0px';
     }
-  }
-
-  /** 動畫結束之後，重製 transition 以避免移動出現延遲 */
-  function resetTransition() {
-    MAP.style.transition = 'width 0.3s, height 0.3s';
-  }
-
-  function handleEnd() {
-    isDown = false;
-  }
-
-  /** 點擊開始的觸發 */
-  function handleMouseStart(event: MouseEvent) {
-    if (event.which !== 1) return;
-    isDown = true;
-    const x = event.clientX;
-    const y = event.clientY;
-    offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
-  }
-
-  /** 點擊開始的觸發 */
-  function handleTouchStart(event: TouchEvent) {
-    event.stopPropagation();
-    isDown = true;
-    const x = event.touches[0].clientX;
-    const y = event.touches[0].clientY;
-    offset = [MAP.offsetLeft - x, MAP.offsetTop - y];
-  }
-
-  /** 滑鼠移動的觸發 */
-  function handleMouseMove(event: MouseEvent) {
-    if (event.which !== 1) return;
-    if (isDown) {
-      let [x, y] = [event.clientX, event.clientY];
-      const position = computedPosition({ x, y });
-
-      MAP.style.left = `${position.left}px`;
-      MAP.style.top = `${position.top}px`;
-    }
-  }
-
-  /** 觸控板移動的觸發 */
-  function handleTouchMove(event: TouchEvent) {
-    event.stopPropagation();
-    if (isDown) {
-      let x = 0,
-        y = 0;
-      if (event.touches) {
-        const log = document.getElementById('log') as HTMLDivElement;
-        const TOUCH = event.touches;
-        log.textContent = `${TOUCH.length}, ${Math.floor(
-          (TOUCH[0] || {}).clientX,
-        )}, ${Math.floor((TOUCH[1] || {}).clientX)}`;
-
-        x = event.touches[0].clientX || 0;
-        y = event.touches[0].clientY || 0;
-      }
-      const position = computedPosition({ x, y });
-
-      MAP.style.left = `${position.left}px`;
-      MAP.style.top = `${position.top}px`;
-    }
-  }
-
-  /** 計算圖片位置的同時，也把圖片邊界考慮在內 */
-  function computedPosition(mousePosition: { x: number; y: number }) {
-    let position_x = 0;
-    const left = mousePosition.x + offset[0];
-    if (left < 0) position_x = left;
-    if (left < WIDTH - MAP_WIDTH.value) {
-      position_x = WIDTH - MAP_WIDTH.value;
-    }
-
-    let position_y = 0;
-    const top = mousePosition.y + offset[1];
-
-    if (top < 0) position_y = top;
-    if (top < HEIGHT - MAP_HEIGHT.value) {
-      position_y = HEIGHT - MAP_HEIGHT.value;
-    }
-    return {
-      left: position_x,
-      top: position_y,
-    };
-  }
-
-  function handleResize() {
-    WIDTH = window.innerWidth || document.documentElement.clientWidth;
-    HEIGHT = window.innerHeight || document.documentElement.clientHeight;
   }
 };
