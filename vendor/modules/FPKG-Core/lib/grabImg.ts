@@ -151,8 +151,8 @@ export default (query: string = '#map') => {
     }
   }
 
-  function handleZoom(boo: boolean, offset: number = 10) {
-    if (boo) {
+  function handleZoom(isZoom: boolean, offset: number = 10) {
+    if (isZoom) {
       scale.value = (scale.value * 100 + offset) / 100;
       resizingMap();
       setOrgin(true);
