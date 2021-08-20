@@ -8,13 +8,14 @@ export default (query: string = '#map') => {
   var offset = [0, 0];
   var isDown = false;
   let prevDiff = -1;
+  const log = document.querySelector('#log');
 
   const MAP = document.querySelector(query) as HTMLDivElement;
   if (!MAP) throw new Error('Map is not exists!.');
 
   const scale = ref(1);
-  let WIDTH = window.innerWidth || document.documentElement.clientWidth;
-  let HEIGHT = window.innerHeight || document.documentElement.clientHeight;
+  let SCR_WIDTH = window.innerWidth || document.documentElement.clientWidth;
+  let SCR_HEIGHT = window.innerHeight || document.documentElement.clientHeight;
 
   const MAP_WIDTH = computed(() => IMG_WIDTH * scale.value);
   const MAP_HEIGHT = computed(() => IMG_HEIGHT * scale.value);
@@ -81,8 +82,8 @@ export default (query: string = '#map') => {
       let [x, y] = [event.clientX, event.clientY];
       const position = computedPosition({ x, y });
 
-      MAP.style.left = `${position.left}px`;
-      MAP.style.top = `${position.top}px`;
+      MAP.style.left = `${position.left.toFixed(3)}px`;
+      MAP.style.top = `${position.top.toFixed(3)}px`;
     }
   }
 
@@ -100,8 +101,8 @@ export default (query: string = '#map') => {
       }
       const position = computedPosition({ x, y });
 
-      MAP.style.left = `${position.left}px`;
-      MAP.style.top = `${position.top}px`;
+      MAP.style.left = `${position.left.toFixed(3)}px`;
+      MAP.style.top = `${position.top.toFixed(3)}px`;
     }
   }
 
@@ -110,16 +111,16 @@ export default (query: string = '#map') => {
     let position_x = 0;
     const left = mousePosition.x + offset[0];
     if (left < 0) position_x = left;
-    if (left < WIDTH - MAP_WIDTH.value) {
-      position_x = WIDTH - MAP_WIDTH.value;
+    if (left < SCR_WIDTH - MAP_WIDTH.value) {
+      position_x = SCR_WIDTH - MAP_WIDTH.value;
     }
 
     let position_y = 0;
     const top = mousePosition.y + offset[1];
 
     if (top < 0) position_y = top;
-    if (top < HEIGHT - MAP_HEIGHT.value) {
-      position_y = HEIGHT - MAP_HEIGHT.value;
+    if (top < SCR_HEIGHT - MAP_HEIGHT.value) {
+      position_y = SCR_HEIGHT - MAP_HEIGHT.value;
     }
     return {
       left: position_x,
@@ -128,8 +129,8 @@ export default (query: string = '#map') => {
   }
 
   function handleResize() {
-    WIDTH = window.innerWidth || document.documentElement.clientWidth;
-    HEIGHT = window.innerHeight || document.documentElement.clientHeight;
+    SCR_WIDTH = window.innerWidth || document.documentElement.clientWidth;
+    SCR_HEIGHT = window.innerHeight || document.documentElement.clientHeight;
   }
 
   function pointermove_handler(ev: TouchEvent) {
@@ -161,8 +162,8 @@ export default (query: string = '#map') => {
     }
 
     const newScale = (scale.value * 100 - offset) / 100;
-    if (IMG_WIDTH * newScale < WIDTH) return;
-    if (IMG_HEIGHT * newScale < HEIGHT) return;
+    if (IMG_WIDTH * newScale < SCR_WIDTH) return;
+    if (IMG_HEIGHT * newScale < SCR_HEIGHT) return;
     scale.value = newScale;
     resizingMap();
     setOrgin(false, offset);
@@ -175,13 +176,14 @@ export default (query: string = '#map') => {
     }
 
     /** 調整地圖縮放時的中心點 */
-    function setOrgin(IsIncrease: boolean, offset: number = 10) {
+    function setOrgin(IsIncrease: boolean, offset: number) {
       const stepX = IMG_WIDTH * (offset / 100);
       const stepY = IMG_HEIGHT * (offset / 100);
       const positionX = parseInt(MAP.style.left);
       const positionY = parseInt(MAP.style.top);
-      const centerX = WIDTH / 2;
-      const centerY = HEIGHT / 2;
+      const centerX = SCR_WIDTH / 2;
+      const centerY = SCR_HEIGHT / 2;
+      // if (log) log.textContent = `${MAP.style.left}, ${MAP.style.top}`;
 
       if (IsIncrease) {
         const percentX = Number(
@@ -215,11 +217,11 @@ export default (query: string = '#map') => {
       const y = parseInt(MAP.style.top);
 
       // 右下角修正
-      if (WIDTH - x > MAP_WIDTH.value) {
-        MAP.style.left = WIDTH - MAP_WIDTH.value + 'px';
+      if (SCR_WIDTH - x > MAP_WIDTH.value) {
+        MAP.style.left = SCR_WIDTH - MAP_WIDTH.value + 'px';
       }
-      if (HEIGHT - y > MAP_HEIGHT.value) {
-        MAP.style.top = HEIGHT - MAP_HEIGHT.value + 'px';
+      if (SCR_HEIGHT - y > MAP_HEIGHT.value) {
+        MAP.style.top = SCR_HEIGHT - MAP_HEIGHT.value + 'px';
       }
 
       // 右上角修正
