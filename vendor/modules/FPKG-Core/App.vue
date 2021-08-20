@@ -5,12 +5,10 @@
   >
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
-      PH body testZoomHH
       <div @click="gogo" class="btn">
         <i class="fas fa-plus"></i>
         clicked: {{ counter }}
       </div>
-      <div id="log"></div>
       <button
         class="navbar-toggler"
         type="button"

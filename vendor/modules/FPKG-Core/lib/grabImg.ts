@@ -93,15 +93,10 @@ export default (query: string = '#map') => {
     if (isDown) {
       let x = 0,
         y = 0;
-      if (event.touches) {
-        const log = document.getElementById('log') as HTMLDivElement;
-        const TOUCH = event.touches;
-        log.textContent = `${TOUCH.length}, ${Math.floor(
-          (TOUCH[0] || {}).clientX,
-        )}, ${Math.floor((TOUCH[1] || {}).clientX)}`;
-
-        x = event.touches[0].clientX || 0;
-        y = event.touches[0].clientY || 0;
+      const TOUCH = event.touches;
+      if (TOUCH) {
+        x = TOUCH[0].clientX || 0;
+        y = TOUCH[0].clientY || 0;
       }
       const position = computedPosition({ x, y });
 
@@ -140,34 +135,32 @@ export default (query: string = '#map') => {
   function pointermove_handler(ev: TouchEvent) {
     const TOUCH = ev.touches;
     if (TOUCH.length == 2) {
-      const curDiff = Math.abs(TOUCH[0].clientX - TOUCH[1].clientX);
-      // var curDiff = Math.hypot(
-      //   TOUCH[0].pageX - TOUCH[1].pageX,
-      //   TOUCH[0].pageY - TOUCH[1].pageY,
-      // );
+      const curDiff = Math.hypot(
+        TOUCH[0].pageX - TOUCH[1].pageX,
+        TOUCH[0].pageY - TOUCH[1].pageY,
+      );
       const isZoom = curDiff > prevDiff;
+      prevDiff = curDiff;
 
       if (isZoom && scale.value === 1) return;
       if (isZoom && scale.value < 1) {
-        handleZoom(true);
-        prevDiff = curDiff;
+        handleZoom(true, 2);
         return;
       }
-      handleZoom(false);
-      prevDiff = curDiff;
+      handleZoom(false, 2);
     }
   }
 
-  function handleZoom(boo: boolean) {
+  function handleZoom(boo: boolean, offset: number = 10) {
     if (boo) {
-      scale.value = (scale.value * 10 + 1) / 10;
+      scale.value = (scale.value * 100 + offset) / 100;
       resizingMap();
       setOrgin(true);
       fixBorder();
       return;
     }
 
-    const newScale = (scale.value * 10 - 1) / 10;
+    const newScale = (scale.value * 100 - offset) / 100;
     if (IMG_WIDTH * newScale < WIDTH) return;
     if (IMG_HEIGHT * newScale < HEIGHT) return;
     scale.value = newScale;
