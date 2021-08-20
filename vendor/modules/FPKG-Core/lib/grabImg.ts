@@ -155,7 +155,7 @@ export default (query: string = '#map') => {
     if (isZoom) {
       scale.value = (scale.value * 100 + offset) / 100;
       resizingMap();
-      setOrgin(true);
+      setOrgin(true, offset);
       fixBorder();
       return;
     }
@@ -165,7 +165,7 @@ export default (query: string = '#map') => {
     if (IMG_HEIGHT * newScale < HEIGHT) return;
     scale.value = newScale;
     resizingMap();
-    setOrgin(false);
+    setOrgin(false, offset);
     fixBorder();
 
     /** 地圖縮放 */
@@ -175,9 +175,9 @@ export default (query: string = '#map') => {
     }
 
     /** 調整地圖縮放時的中心點 */
-    function setOrgin(IsIncrease: boolean) {
-      const stepX = IMG_WIDTH * 0.1;
-      const stepY = IMG_HEIGHT * 0.1;
+    function setOrgin(IsIncrease: boolean, offset: number = 10) {
+      const stepX = IMG_WIDTH * (offset / 100);
+      const stepY = IMG_HEIGHT * (offset / 100);
       const positionX = parseInt(MAP.style.left);
       const positionY = parseInt(MAP.style.top);
       const centerX = WIDTH / 2;
