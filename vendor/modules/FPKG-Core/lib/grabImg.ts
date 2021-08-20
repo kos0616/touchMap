@@ -30,7 +30,7 @@ export default (query: string = '#map') => {
 
   MAP.addEventListener('touchstart', handleTouchStart, true);
   MAP.addEventListener('touchmove', handleTouchMove, true);
-  MAP.addEventListener('touchmove', pointermove_handler, true);
+  MAP.addEventListener('touchmove', handleGesture, true);
   document.addEventListener('touchend', handleEnd, true);
 
   MAP.addEventListener('mousedown', handleMouseStart, true);
@@ -133,22 +133,29 @@ export default (query: string = '#map') => {
     SCR_HEIGHT = window.innerHeight || document.documentElement.clientHeight;
   }
 
-  function pointermove_handler(ev: TouchEvent) {
+  /** 放大縮小
+   *  為了不錯位，因此位移中需要關閉位移鎖定
+   *  當縮放結束後，再重新打開
+   */
+  function handleGesture(ev: TouchEvent) {
     const TOUCH = ev.touches;
     if (TOUCH.length == 2) {
+      /** 停止位移 */
+      isDown = false;
       const curDiff = Math.hypot(
         TOUCH[0].pageX - TOUCH[1].pageX,
         TOUCH[0].pageY - TOUCH[1].pageY,
       );
       const isZoom = curDiff > prevDiff;
+      /** 快取值，以便作為下一次縮放的依據 */
       prevDiff = curDiff;
 
       if (isZoom && scale.value === 1) return;
       if (isZoom && scale.value < 1) {
-        handleZoom(true, 2);
+        handleZoom(true);
         return;
       }
-      handleZoom(false, 2);
+      handleZoom(false);
     }
   }
 
@@ -183,7 +190,6 @@ export default (query: string = '#map') => {
       const positionY = parseInt(MAP.style.top);
       const centerX = SCR_WIDTH / 2;
       const centerY = SCR_HEIGHT / 2;
-      // if (log) log.textContent = `${MAP.style.left}, ${MAP.style.top}`;
 
       if (IsIncrease) {
         const percentX = Number(
@@ -195,6 +201,7 @@ export default (query: string = '#map') => {
 
         MAP.style.left = positionX + percentX * stepX + 'px';
         MAP.style.top = positionY + percentY * stepY + 'px';
+        if (log) log.textContent = `${MAP.style.left}, ${MAP.style.top}`;
         return;
       }
 
@@ -229,4 +236,8 @@ export default (query: string = '#map') => {
       if (y > 0) MAP.style.top = '0px';
     }
   }
+
+  return {
+    handleZoom,
+  };
 };

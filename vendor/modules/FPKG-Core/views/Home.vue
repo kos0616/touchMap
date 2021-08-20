@@ -1,5 +1,19 @@
 <template>
   <div id="map-wrap" class="w-100">
+    <button
+      @click="A(true)"
+      class="position-absolute"
+      style="right: 0; top: 100px; z-index: 2"
+    >
+      +
+    </button>
+    <button
+      @click="B(false)"
+      class="position-absolute"
+      style="right: 0; top: 130px; z-index: 2"
+    >
+      -
+    </button>
     <div id="map" class="position-absolute" style="left: -50%; top: -50%">
       <div class="position-relative h-100">
         <button
@@ -26,23 +40,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent, nextTick, ref } from 'vue';
 import grabImg from '../lib/grabImg';
 import STATE from '../API/state';
 
 export default defineComponent({
   setup() {
     const { state } = STATE;
-
+    let A = ref(null) as any;
+    let B = ref(null) as any;
     const gogo = () => {
       state.count += 1;
     };
     nextTick(() => {
-      grabImg();
+      const { handleZoom } = grabImg();
+      A.value = handleZoom;
+      B.value = handleZoom;
     });
 
     return {
       gogo,
+      A,
+      B,
     };
   },
 });
