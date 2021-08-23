@@ -1,7 +1,9 @@
 import { ref, computed } from 'vue';
 
-const IMG_WIDTH = 4584;
-const IMG_HEIGHT = 3056;
+const IMG_WIDTH = 4000;
+const IMG_HEIGHT = 2250;
+// const IMG_WIDTH = 4584;
+// const IMG_HEIGHT = 3056;
 /** 最大縮放 */
 const MAX_SCALE = 1;
 
@@ -14,7 +16,7 @@ export default (query: string = '#map') => {
   const MAP = document.querySelector(query) as HTMLDivElement;
   if (!MAP) throw new Error('Map is not exists!.');
 
-  const scale = ref(1);
+  const scale = ref(0.5);
   let SCR_WIDTH = window.innerWidth || document.documentElement.clientWidth;
   let SCR_HEIGHT = window.innerHeight || document.documentElement.clientHeight;
 
@@ -25,9 +27,8 @@ export default (query: string = '#map') => {
 
   MAP.style.width = `${MAP_WIDTH.value}px`;
   MAP.style.height = `${MAP_HEIGHT.value}px`;
-  MAP.style.transform = `scale(${scale.value})`;
-  MAP.style.left = "0px"
-  MAP.style.top = "0px"
+  MAP.style.left = `-${(MAP_WIDTH.value - SCR_WIDTH) / 2}px`
+  MAP.style.top = `-${(MAP_HEIGHT.value - SCR_HEIGHT) / 2}px`
 
   MAP.addEventListener('transitionend', resetTransition, true);
 

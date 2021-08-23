@@ -76,7 +76,7 @@ export default defineComponent({
   overflow: hidden;
   position: relative;
   #map {
-    background-image: url(../assets/map.jpg);
+    background-image: url(../assets/map01.jpg);
     background-size: contain;
     transition: width 0.3s, height 0.3s;
   }
