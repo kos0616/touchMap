@@ -1,20 +1,23 @@
 <template>
   <div id="map-wrap" class="w-100">
-    <button
-      @click="A(true)"
-      class="position-absolute"
-      style="right: 0; top: 100px; z-index: 2"
+    <div
+      class="position-absolute btn-group-vertical rounded"
+      style="
+        right: 5px;
+        top: 100px;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.4);
+      "
     >
-      +
-    </button>
-    <button
-      @click="B(false)"
-      class="position-absolute"
-      style="right: 0; top: 130px; z-index: 2"
-    >
-      -
-    </button>
-    <div id="map" class="position-absolute" style="left: -50%; top: -50%">
+      <button @click="ZoomIn(true)" class="btn btn-outline-light border-dark">
+        <i class="fas fa-plus" />
+      </button>
+      <button @click="ZoomOut(false)" class="btn btn-outline-light border-dark">
+        <i class="fas fa-minus" />
+      </button>
+    </div>
+
+    <div id="map" class="position-absolute">
       <div class="position-relative h-100">
         <button
           @click="gogo"
@@ -47,21 +50,21 @@ import STATE from '../API/state';
 export default defineComponent({
   setup() {
     const { state } = STATE;
-    let A = ref(null) as any;
-    let B = ref(null) as any;
+    let ZoomIn = ref(null) as any;
+    let ZoomOut = ref(null) as any;
     const gogo = () => {
       state.count += 1;
     };
     nextTick(() => {
       const { handleZoom } = grabImg();
-      A.value = handleZoom;
-      B.value = handleZoom;
+      ZoomIn.value = handleZoom;
+      ZoomOut.value = handleZoom;
     });
 
     return {
       gogo,
-      A,
-      B,
+      ZoomIn,
+      ZoomOut,
     };
   },
 });

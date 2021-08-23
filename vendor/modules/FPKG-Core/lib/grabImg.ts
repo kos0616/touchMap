@@ -2,13 +2,14 @@ import { ref, computed } from 'vue';
 
 const IMG_WIDTH = 4584;
 const IMG_HEIGHT = 3056;
+/** 最大縮放 */
+const MAX_SCALE = 1;
 
 /** query: DOM */
 export default (query: string = '#map') => {
   var offset = [0, 0];
   var isDown = false;
   let prevDiff = -1;
-  const log = document.querySelector('#log');
 
   const MAP = document.querySelector(query) as HTMLDivElement;
   if (!MAP) throw new Error('Map is not exists!.');
@@ -25,6 +26,8 @@ export default (query: string = '#map') => {
   MAP.style.width = `${MAP_WIDTH.value}px`;
   MAP.style.height = `${MAP_HEIGHT.value}px`;
   MAP.style.transform = `scale(${scale.value})`;
+  MAP.style.left = "0px"
+  MAP.style.top = "0px"
 
   MAP.addEventListener('transitionend', resetTransition, true);
 
@@ -40,8 +43,8 @@ export default (query: string = '#map') => {
 
   function handleScroll(e: WheelEvent) {
     const isZoom = e.deltaY < 0;
-    if (isZoom && scale.value === 1) return;
-    if (isZoom && scale.value < 1) {
+
+    if (isZoom) {
       handleZoom(true);
       return;
     }
@@ -150,8 +153,7 @@ export default (query: string = '#map') => {
       /** 快取值，以便作為下一次縮放的依據 */
       prevDiff = curDiff;
 
-      if (isZoom && scale.value === 1) return;
-      if (isZoom && scale.value < 1) {
+      if (isZoom) {
         handleZoom(true);
         return;
       }
@@ -160,7 +162,7 @@ export default (query: string = '#map') => {
   }
 
   function handleZoom(isZoom: boolean, offset: number = 10) {
-    console.log(scale.value)
+    if (isZoom && scale.value === MAX_SCALE) return
     if (isZoom) {
       scale.value = roundDecimal((scale.value * 100 + offset) / 100, 1);
       resizingMap();
@@ -202,7 +204,6 @@ export default (query: string = '#map') => {
 
         MAP.style.left = positionX + percentX * stepX + 'px';
         MAP.style.top = positionY + percentY * stepY + 'px';
-        if (log) log.textContent = `${MAP.style.left}, ${MAP.style.top}`;
         return;
       }
 
