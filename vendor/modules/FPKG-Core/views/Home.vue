@@ -7,6 +7,7 @@
         top: 100px;
         z-index: 2;
         background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
       "
     >
       <button @click="ZoomIn(true)" class="btn btn-outline-light border-dark">
