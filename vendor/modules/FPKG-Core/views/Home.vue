@@ -21,8 +21,8 @@
     <div id="map" class="position-absolute">
       <div class="position-relative h-100">
         <button
-          @click="gogo"
-          @touchstart="gogo"
+          @click="handleBtnClick"
+          @touchstart="handleBtnClick"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 30%; top: 30%"
@@ -30,11 +30,38 @@
           <i class="fas fa-flag"></i>
         </button>
         <button
-          @click="gogo"
-          @touchstart="gogo"
+          @click="handleBtnClick"
+          @touchstart="handleBtnClick"
           type="button"
           class="position-absolute btn btn-primary"
           style="left: 20%; top: 20%"
+        >
+          <i class="fas fa-flag"></i>
+        </button>
+        <button
+          @click="handleBtnClick"
+          @touchstart="handleBtnClick"
+          type="button"
+          class="position-absolute btn btn-primary"
+          style="right: 20%; top: 20%"
+        >
+          <i class="fas fa-flag"></i>
+        </button>
+        <button
+          @click="handleBtnClick"
+          @touchstart="handleBtnClick"
+          type="button"
+          class="position-absolute btn btn-primary"
+          style="right: 20%; bottom: 20%"
+        >
+          <i class="fas fa-flag"></i>
+        </button>
+        <button
+          @click="handleBtnClick"
+          @touchstart="handleBtnClick"
+          type="button"
+          class="position-absolute btn btn-primary"
+          style="right: 50%; bottom: 50%"
         >
           <i class="fas fa-flag"></i>
         </button>
@@ -53,8 +80,9 @@ export default defineComponent({
     const { state } = STATE;
     let ZoomIn = ref(null) as any;
     let ZoomOut = ref(null) as any;
-    const gogo = () => {
+    const handleBtnClick = () => {
       state.count += 1;
+      alert('FIND TREASURE!');
     };
     nextTick(() => {
       const { handleZoom } = grabImg();
@@ -63,7 +91,7 @@ export default defineComponent({
     });
 
     return {
-      gogo,
+      handleBtnClick,
       ZoomIn,
       ZoomOut,
     };
