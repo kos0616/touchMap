@@ -1,10 +1,10 @@
 <template>
-  <div id="map-wrap" class="w-100">
+  <div id="map-wrap" class="w-100 h-100">
     <div
       class="position-absolute btn-group-vertical rounded"
       style="
         right: 5px;
-        top: 100px;
+        top: 45%;
         z-index: 2;
         background-color: rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(2px);
@@ -72,8 +72,8 @@
 
 <script lang="ts">
 import { defineComponent, nextTick, ref } from 'vue';
-import grabImg from '../lib/grabImg';
-import STATE from '../API/state';
+import grabImg from '../../lib/grabImg';
+import STATE from '../../API/state';
 
 export default defineComponent({
   setup() {
@@ -104,7 +104,7 @@ export default defineComponent({
   overflow: hidden;
   position: relative;
   #map {
-    background-image: url(../assets/map01.jpg);
+    background-image: url(../../assets/map01.jpg);
     background-size: contain;
     transition: width 0.3s, height 0.3s;
   }
