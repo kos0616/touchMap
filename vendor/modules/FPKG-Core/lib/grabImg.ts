@@ -160,15 +160,16 @@ export default (query: string = '#map') => {
   }
 
   function handleZoom(isZoom: boolean, offset: number = 10) {
+    console.log(scale.value)
     if (isZoom) {
-      scale.value = (scale.value * 100 + offset) / 100;
+      scale.value = roundDecimal((scale.value * 100 + offset) / 100, 1);
       resizingMap();
       setOrgin(true, offset);
       fixBorder();
       return;
     }
 
-    const newScale = (scale.value * 100 - offset) / 100;
+    const newScale = roundDecimal((scale.value * 100 - offset) / 100, 1);
     if (IMG_WIDTH * newScale < SCR_WIDTH) return;
     if (IMG_HEIGHT * newScale < SCR_HEIGHT) return;
     scale.value = newScale;
@@ -241,3 +242,8 @@ export default (query: string = '#map') => {
     handleZoom,
   };
 };
+
+/** 帶小數的四捨五入 */
+function roundDecimal(val: number, precision: number) {
+  return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
+}
