@@ -12,7 +12,7 @@ import {
   watch,
 } from 'vue';
 
-let CLOCK_ID: number;
+let CLOCK_ID: any;
 
 export default defineComponent({
   setup() {

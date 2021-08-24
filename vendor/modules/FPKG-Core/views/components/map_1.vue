@@ -73,17 +73,16 @@
 <script lang="ts">
 import { defineComponent, nextTick, ref } from 'vue';
 import grabImg from '../../lib/grabImg';
-import STATE from '../../API/state';
 
 export default defineComponent({
-  setup() {
-    const { state } = STATE;
+  setup(props, { emit }) {
     let ZoomIn = ref(null) as any;
     let ZoomOut = ref(null) as any;
+
     const handleBtnClick = () => {
-      state.count += 1;
-      alert('FIND TREASURE!');
+      emit('getQuset');
     };
+
     nextTick(() => {
       const { handleZoom } = grabImg();
       ZoomIn.value = handleZoom;

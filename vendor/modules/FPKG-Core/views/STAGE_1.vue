@@ -2,20 +2,29 @@
   <div class="position-relative">
     <clock id="clock" class="position-absolute" />
     <collection id="collection" class="position-absolute" />
-    <mapA />
+    <map1 @getQuset="handleGetQuset" />
+    <question />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import collection from './components/collection.vue';
 import clock from './components/clock.vue';
-import mapA from './components/map_1.vue';
+import map1 from './components/map_1.vue';
+import question from './components/question.vue';
+import Qstate from '../API/quest';
 
 export default defineComponent({
-  components: { clock, mapA, collection },
+  components: { clock, map1, collection, question },
   setup() {
-    return {};
+    const { dialog, setDialog } = Qstate;
+
+    const handleGetQuset = () => {
+      setDialog(true);
+    };
+
+    return { handleGetQuset, dialog };
   },
 });
 </script>
