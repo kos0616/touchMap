@@ -2,13 +2,13 @@
   <div class="position-relative">
     <clock id="clock" class="position-absolute" />
     <collection id="collection" class="position-absolute" />
-    <map1 @getQuset="handleGetQuset" />
+    <map1 @getQuset="handleGetQuset" style="min-height: 100vh" />
     <question />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import collection from './components/collection.vue';
 import clock from './components/clock.vue';
 import map1 from './components/map_1.vue';

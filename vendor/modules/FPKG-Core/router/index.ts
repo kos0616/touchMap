@@ -1,12 +1,21 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-// import Home from "../views/MAP.vue";
-import Home from "../views/STAGE_1.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import STAGES from '../views/STAGE.vue';
+import STAGE_1 from '../views/STAGE_1.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: '/',
+    redirect: '/stage',
+  },
+  {
+    path: '/stage',
+    name: 'stages',
+    component: STAGES,
+  },
+  {
+    path: '/stage/1',
+    name: 'stage_1',
+    component: STAGE_1,
   },
 ];
 

@@ -4,7 +4,7 @@
     style="backdrop-filter: blur(5px)"
   >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">One Piece</a>
+      <a class="navbar-brand" href="/">One Piece</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -18,7 +18,7 @@
       </button>
     </div>
   </nav>
-  <router-view style="height: 100vh" />
+  <router-view style="min-height: 100vh" />
 </template>
 
 <script lang="ts">
