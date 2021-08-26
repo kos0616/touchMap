@@ -2,9 +2,9 @@
   <div class="collection d-flex align-items-center">
     <div class="collection-wrap d-flex">
       <div
-        v-for="I in 6"
-        :key="`collect_${I}`"
-        :class="{ active: counter >= I }"
+        v-for="(C, i) in collection"
+        :key="`collect_${i}`"
+        :class="{ getItem: C.isPassed, dropItem: C.testIndex && !C.isPassed }"
         class="collection-item"
       >
         <img
@@ -14,7 +14,7 @@
         />
       </div>
     </div>
-    <div class="collection-progress">{{ counter }}/6</div>
+    <div class="collection-progress">{{ avaiableReply }}/6</div>
   </div>
 </template>
 
@@ -22,24 +22,37 @@
 import { defineComponent, computed, watch } from 'vue';
 import STATE from '../../API/state';
 
+const MAX = 6;
+
 export default defineComponent({
   setup() {
     const { state } = STATE;
 
-    const counter = computed(() => {
-      if (state.count <= 6) return state.count;
-      return 6;
+    const collection = computed(() => {
+      const arr = state.answerState;
+      let fill = [];
+      if (arr.length < MAX) {
+        fill = new Array(MAX - arr.length).fill({});
+      }
+
+      return [...arr, ...fill];
+    });
+
+    /* 有效答題 */
+    const avaiableReply = computed(() => {
+      return collection.value.filter((c) => c.testIndex).length;
     });
 
     const checkCounter = (v: number) => {
-      if (v >= 6) {
-        alert('Success!');
+      if (v >= MAX) {
+        alert('答題結束!');
       }
     };
-    watch(counter, checkCounter);
+    watch(avaiableReply, checkCounter);
 
     return {
-      counter,
+      collection,
+      avaiableReply,
     };
   },
 });
@@ -70,10 +83,13 @@ export default defineComponent({
 
     .collection-item {
       padding: 0 0.2rem;
-      filter: brightness(0.2);
+      filter: contrast(0);
       transition: all 0.3s;
-      &.active {
+      &.getItem {
         filter: brightness(1) drop-shadow(1px 3px 2px rgba(0, 0, 0, 0.4));
+      }
+      &.dropItem {
+        filter: brightness(0.2);
       }
       .collection-img {
         width: 60px;

@@ -94,12 +94,16 @@ export default defineComponent({
     const { state } = CollestState;
 
     const handleSubmit = () => {
-      const trueAnswer = data.myQuest.answer;
-      const myAnswer = data.answer;
+      const answer = data.myQuest.answer;
+      const reply = data.answer;
       data.showAnswer = true;
-      if (trueAnswer === myAnswer) {
-        state.count = state.count + 1;
-      }
+
+      state.answerState.push({
+        testIndex: 1,
+        reply,
+        answer,
+        isPassed: answer === reply,
+      });
     };
 
     const refData = toRefs(data);

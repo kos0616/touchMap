@@ -20,6 +20,7 @@ export default defineComponent({
   setup() {
     const { dialog, setDialog } = Qstate;
 
+    /* 取得問題，打開答題 dialog */
     const handleGetQuset = () => {
       setDialog(true);
     };
