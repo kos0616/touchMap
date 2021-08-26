@@ -19,20 +19,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, watch } from 'vue';
+import { defineComponent, computed } from 'vue';
 import STATE from '../../API/state';
 
-const MAX = 6;
-
 export default defineComponent({
-  setup() {
+  props: {
+    MAX: {
+      type: Number,
+      default: 6,
+    },
+  },
+  setup(props) {
     const { state } = STATE;
-
     const collection = computed(() => {
       const arr = state.answerState;
       let fill = [];
-      if (arr.length < MAX) {
-        fill = new Array(MAX - arr.length).fill({});
+      if (arr.length < props.MAX) {
+        fill = new Array(props.MAX - arr.length).fill({});
       }
 
       return [...arr, ...fill];
@@ -42,13 +45,6 @@ export default defineComponent({
     const avaiableReply = computed(() => {
       return collection.value.filter((c) => c.testIndex).length;
     });
-
-    const checkCounter = (v: number) => {
-      if (v >= MAX) {
-        alert('答題結束!');
-      }
-    };
-    watch(avaiableReply, checkCounter);
 
     return {
       collection,

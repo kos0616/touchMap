@@ -15,8 +15,14 @@ const state = reactive({
   count: 0,
   /* 使用過的題庫 */
   questionAsked: [] as number[],
-  /* 回答狀況 */
+  /* 當前關卡回答狀況 */
   answerState: [] as answerState[],
+  /* 全部答題情況 */
+  totalAnswerState: [] as answerState[],
 });
 
-export default { state };
+const cleanAnswer = () => {
+  state.answerState = [];
+};
+
+export default { state, cleanAnswer };

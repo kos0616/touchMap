@@ -54,18 +54,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, toRefs, reactive } from 'vue';
+import { defineComponent, watch, toRefs, reactive, PropType } from 'vue';
 import quest, { typeQuest } from '../../assets/question';
 import Qstate from '../../API/quest';
 import CollestState from '../../API/state';
 
 export default defineComponent({
-  props: {
-    moduleValue: {
-      type: Boolean,
-      default: false,
-    },
-  },
   setup() {
     const { dialog } = Qstate;
 
@@ -98,12 +92,14 @@ export default defineComponent({
       const reply = data.answer;
       data.showAnswer = true;
 
-      state.answerState.push({
+      const replyState = {
         testIndex: 1,
         reply,
         answer,
         isPassed: answer === reply,
-      });
+      };
+      state.answerState.push(replyState);
+      state.totalAnswerState.push(replyState);
     };
 
     const refData = toRefs(data);
